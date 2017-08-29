@@ -1,0 +1,16 @@
+ <!DOCTYPE RCC><RCC version="1.0">
+ <qresource>
+        <file>resources/qexpressvpn.png</file>
+        <file>resources/contextHelp.png</file>
+        <file>resources/contextHelp_small.png</file>
+        <file>resources/connect.png</file>
+        <file>resources/disconnect.png</file>
+        <file>resources/connect_small.png</file>
+        <file>resources/disconnect_small.png</file>
+        <file>resources/status.png</file>
+        <file>resources/status_small.png</file>
+        <file>resources/check20.png</file>
+        <file>resources/qexpressvpn_es.qm</file>
+ </qresource>
+ </RCC>
+
