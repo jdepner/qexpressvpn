@@ -1,0 +1,34 @@
+
+
+The qexpressvpn program is a simple Qt GUI driver for the ExpressVPN Linux 
+client, expressvpn.  It allows you to connect to, and disconnect from, 
+ExpressVPN servers around the world.  There is a Spanish translation but 
+it was done with Google Translate so it probably has some errors.  It would be 
+nice if someone could fix it.  The instructions are in the INSTALL file.
+
+
+Disclaimer
+
+    The qexpressvpn program is Copyright (c) 2017 Jan C. Depner 
+(jan@pfmabe.software) and is released under version 3 of 
+the GNU General Public License (GPLv3).
+
+qexpressvpn is free software; you can redistribute it and/or modify it under 
+the terms of the GNU General Public License as published by the Free Software 
+Foundation; either version 3 of the License, or (at your option) any later 
+version.
+
+qexpressvpn is distributed in the hope that it will be useful, but WITHOUT 
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
+FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with 
+this program; if not, write to the Free Software Foundation, Inc., 51 Franklin 
+Street, Fifth Floor, Boston, MA 02110-1301  USA
+
+When you acquired qexpressvpn you should have received or been allowed to 
+download a copy of the source code for this program along with this README 
+file, a COPYING file containing a text version of the GPLv3, and an INSTALL 
+file.
+
+The INSTALL file has instructions for building and installing qexpressvpn.

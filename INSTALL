@@ -1,0 +1,79 @@
+
+General notes
+*************************
+
+    The qexpressvpn program is a simple Qt GUI driver for the ExpressVPN 
+Linux client, expressvpn.  It allows you to connect to, and disconnect from, 
+ExpressVPN servers around the world.
+
+    Just one thing before you get into the code - I've never claimed to be a 
+C++ programmer.  Most of what I know I got from the Qt examples.  I've been 
+programming for a living since 1978 and I've made the transition from FORTRAN 
+to C++ via BASIC, COBOL, Pascal, C, Java, a couple of assembly languages, and 
+some other esoteric stuff.  If you think my code looks archaic, there's a good 
+reason for that... I'm old ;-)
+
+
+Installing on Linux
+*************************
+
+    On Linux you'll, obviously, need the gcc compiler.  It's usually just 
+called gcc in whatever tool you use to acquire software.  In Ubuntu you can 
+just type "gcc" on the command line then press Enter.  If you don't have it 
+installed you will be instructed how to install it.
+
+    You will also need to install the Qt development packages.  You can use 
+either Qt4 or Qt5.  As an example of what you are looking for, on Ubuntu 16.04 
+the Qt5 development package is called qt5-default.  On some older distributions 
+you should look for something like libqt5-dev.  Whichever package you install, 
+you need to make sure that the qmake executable for that package is in your 
+PATH.
+
+    I'm using Qt's qmake program to create the Qt .pro file and the Makefile.  
+To make it really simple I've made a script that is designed to be run in the 
+bash shell.  The script is called "mk".  The mk script runs qmake to create the 
+qexpressvpn.pro file.  After creating the .pro file the mk script runs qmake 
+again to create the Makefile.  It will then compile and link the code.  This 
+creates an executable file called qexpressvpn in the source directory.  To run 
+mk, simply open a console (or konsole if you will), cd to the directory 
+containing the source code, then enter:
+
+    ./mk
+
+If you want to have the executable moved to somewhere in the system PATH you 
+can do something like this instead:
+
+    sudo ./mk /usr/local/bin
+
+that will put the qexpressvpn executable in /usr/local/bin (which is probably 
+in your PATH).
+
+
+Translations
+*************************
+
+    I have included a Spanish translation for qexpressvpn but it was done with 
+Google Translate so it's probably a bit off.  It would be nice if someone who 
+speaks Spanish would fix it.  The way to do that is to use Qt's "linguist" 
+program.  Just run
+
+    linguist qexpressvpn_es.ts
+
+to open the translation file, then correct the errors, save it, then "Release 
+As..." resources/qexpressvpn_es.qm.
+
+    To add a new translation (e.g. French) you can run ./mk to generate the 
+qexpressvpn.pro file then edit qexpressvpn.pro and add the new translation to 
+the TRANSLATIONS line.  For example, like this:
+
+    TRANSLATIONS += qexpressvpn_es.ts qexpressvpn_fr.ts
+
+then run
+
+    lupdate qexpressvpn.pro
+
+to generate the boilerplate qexpressvpn_fr.ts file.  Once that is done you need 
+to run linguist on that file and add the translations.  When that is complete, 
+save it and release it as resources/qexpressvpn_fr.ts.  When that is complete 
+you need to edit the resources.qrc file and add the qm file to the list of 
+resources.  Just look at the line for qexpressvpn_es.qm to see how that's done.

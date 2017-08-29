@@ -1,0 +1,7 @@
+*.o
+moc_*
+*~
+*.pro
+Makefile
+qrc_resources*
+cleanit
