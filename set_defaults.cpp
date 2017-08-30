@@ -32,6 +32,7 @@ void set_defaults (MISC *misc, OPTIONS *options)
   misc->connected = false;
   misc->status = "Unknown";
   misc->progName = "expressvpn";
+  misc->recent_count = 0;
 
 
   options->preferred_protocol = 0;
