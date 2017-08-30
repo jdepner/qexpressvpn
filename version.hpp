@@ -26,7 +26,7 @@
 
 #ifndef VERSION
 
-#define     VERSION     "PFM Software - qexpressvpn V1.01 - 08/29/17"
+#define     VERSION     "PFM Software - qexpressvpn V1.00 - 08/24/17"
 
 #endif
 
@@ -38,13 +38,5 @@
     08/24/17
 
     First working version.
-
-
-    Version 1.01
-    Jan C. Depner (PFM Software)
-    08/29/17
-
-    Fixed bug caused by running with no "recent" servers.  In other words, no connections have ever been made to
-    ExpressVPN servers.
 
 </pre>*/
