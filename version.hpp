@@ -26,7 +26,7 @@
 
 #ifndef VERSION
 
-#define     VERSION     "PFM Software - qexpressvpn V1.01 - 08/29/17"
+#define     VERSION     "PFM Software - qexpressvpn V1.02 - 08/31/17"
 
 #endif
 
@@ -46,5 +46,12 @@
 
     Fixed bug caused by running with no "recent" servers.  In other words, no connections have ever been made to
     ExpressVPN servers.
+
+
+    Version 1.02
+    Jan C. Depner (PFM Software)
+    08/31/17
+
+    Disabled the status button while trying to connect to a server.
 
 </pre>*/

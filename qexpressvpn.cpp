@@ -545,6 +545,12 @@ qexpressvpn::slotConnectClicked (bool checked __attribute__ ((unused)))
   misc.connectString = "";
 
 
+  //  Before we start the process we want to disable the status button.  It will get the status information but we don't want
+  //  anyone clikcing it while it is in the process of connecting.
+
+  statusButton->setEnabled (false);
+
+
   qexpressvpnProc->start (misc.progName, arguments);
 
 
@@ -553,6 +559,11 @@ qexpressvpn::slotConnectClicked (bool checked __attribute__ ((unused)))
   //  the error information in misc.connectString.
 
   qexpressvpnProc->waitForFinished (-1);
+
+
+  //  Since we waited for it to finish, we can now re-enable the status button.
+
+  statusButton->setEnabled (true);
 
 
   getStatus ();
