@@ -26,7 +26,7 @@
 
 #ifndef VERSION
 
-#define     VERSION     "PFM Software - qexpressvpn V1.02 - 08/31/17"
+#define     VERSION     "PFM Software - qexpressvpn V1.03 - 09/03/17"
 
 #endif
 
@@ -53,5 +53,12 @@
     08/31/17
 
     Disabled the status button while trying to connect to a server.
+
+
+    Version 1.03
+    Jan C. Depner (PFM Software)
+    09/03/17
+
+    Added Preferences option for "Stay on top" hint to be set for status dialog.
 
 </pre>*/

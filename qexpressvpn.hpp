@@ -84,7 +84,7 @@ protected:
 
   QComboBox       *protocol;
 
-  QCheckBox       *autoDisconnect;
+  QCheckBox       *autoDisconnect, *stayOnTop;
 
   QString         serverTextColorString, fontString, arg, tempFileName;
 
@@ -123,6 +123,7 @@ protected slots:
   void slotFont ();
   void slotProtocolChanged (int index);
   void slotAutoDisconnect (int state);
+  void slotStayOnTop (int state);
 
 
   void slotHelp ();

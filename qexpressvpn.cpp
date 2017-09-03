@@ -245,6 +245,9 @@ qexpressvpn::qexpressvpn (QWidget *parent, QString translatorName):
   prefBoxLayout->addWidget (protocol);
 
 
+  QHBoxLayout *checksLayout = new QHBoxLayout (0);
+  prefBoxLayout->addLayout (checksLayout);
+
   autoDisconnect = new QCheckBox (tr ("Automatic disconnect on close"), this);
   autoDisconnect->setToolTip (tr ("Toggle automatic disconnect on close"));
   autoDisconnect->setWhatsThis (tr ("Set this button if you would like for qexpressvpn to disconnect from the "
@@ -253,7 +256,18 @@ qexpressvpn::qexpressvpn (QWidget *parent, QString translatorName):
   autoDisconnect->setCheckable (true);
   autoDisconnect->setChecked (options.auto_disconnect);
   connect (autoDisconnect, SIGNAL (stateChanged (int)), this, SLOT (slotAutoDisconnect (int)));
-  prefBoxLayout->addWidget (autoDisconnect);
+  checksLayout->addWidget (autoDisconnect);
+
+
+  stayOnTop = new QCheckBox (tr ("Status dialog on top"), this);
+  stayOnTop->setToolTip (tr ("Toggle status dialog on top of other windows"));
+  stayOnTop->setWhatsThis (tr ("Set this button if you would like for the minimized status dialog window to stay on top of other "
+                               "windows.<br><br>"
+                               "<b>NOTE: This is dependent on the window manager and is only a hint to the window manager.  It may not actually happen.</b>"));
+  stayOnTop->setCheckable (true);
+  stayOnTop->setChecked (options.stay_on_top);
+  connect (stayOnTop, SIGNAL (stateChanged (int)), this, SLOT (slotStayOnTop (int)));
+  checksLayout->addWidget (stayOnTop);
 
 
   qexpressvpnTab->addTab (prefBox, tr ("Preferences"));
@@ -1307,6 +1321,23 @@ qexpressvpn::slotAutoDisconnect (int state)
   else
     {
       options.auto_disconnect = false;
+    }
+}
+
+
+
+//  Toggle the "Stay on top" hint value
+
+void
+qexpressvpn::slotStayOnTop (int state)
+{
+  if (state == Qt::Checked)
+    {
+      options.stay_on_top = true;
+    }
+  else
+    {
+      options.stay_on_top = false;
     }
 }
 

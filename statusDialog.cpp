@@ -34,6 +34,15 @@ statusDialog::statusDialog (QWidget * parent, OPTIONS *op, MISC *mi):
   normal_exit = false;
 
 
+  //  Set the "Stay on top" hint if requested.
+
+  if (options->stay_on_top)
+    {
+      Qt::WindowFlags flags = windowFlags ();
+      setWindowFlags (flags | Qt::WindowStaysOnTopHint);
+    }
+
+
   setWindowTitle ("qexpressvpn");
 
 
