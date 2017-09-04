@@ -50,6 +50,7 @@ void set_defaults (MISC *misc, OPTIONS *options)
   options->current_server.index = 0;
   options->auto_disconnect = false;
   options->stay_on_top = false;
+  options->auto_mini = false;
 
   options->window_width = 645;
   options->window_height = 700;

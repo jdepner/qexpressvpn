@@ -26,7 +26,7 @@
 
 #ifndef VERSION
 
-#define     VERSION     "PFM Software - qexpressvpn V1.03 - 09/03/17"
+#define     VERSION     "PFM Software - qexpressvpn V1.04 - 09/04/17"
 
 #endif
 
@@ -60,5 +60,12 @@
     09/03/17
 
     Added Preferences option for "Stay on top" hint to be set for status dialog.
+
+
+    Version 1.04
+    Jan C. Depner (PFM Software)
+    09/04/17
+
+    Added Preferences option to automatically minimize (to the status button) on connect.
 
 </pre>*/

@@ -270,6 +270,17 @@ qexpressvpn::qexpressvpn (QWidget *parent, QString translatorName):
   checksLayout->addWidget (stayOnTop);
 
 
+  autoMini = new QCheckBox (tr ("Automatic minimize on connect"), this);
+  autoMini->setToolTip (tr ("Set this to force the GUI to become the status dialog when connected"));
+  autoMini->setWhatsThis (tr ("Set this button if you would like for the GUI to become the minimized status dialog window when connected to a server.<br><br>"
+                              "<b>NOTE: In this context, 'minimize' does not mean to iconify the application.  It means that the GUI becomes just the status button "
+                              "dialog.</b>"));
+  autoMini->setCheckable (true);
+  autoMini->setChecked (options.auto_mini);
+  connect (autoMini, SIGNAL (stateChanged (int)), this, SLOT (slotAutoMini (int)));
+  checksLayout->addWidget (autoMini);
+
+
   qexpressvpnTab->addTab (prefBox, tr ("Preferences"));
   qexpressvpnTab->setTabToolTip (PREF_TAB, tr ("Set qexpressvpn preferences"));
   qexpressvpnTab->setTabWhatsThis (PREF_TAB, tr ("Click this button to edit the qexpressvpn preferences."));
@@ -344,6 +355,11 @@ qexpressvpn::qexpressvpn (QWidget *parent, QString translatorName):
 
 
   show ();
+
+
+  //  If the user has selected the "auto minimize" option and we are connected to a server, go ahead and minimize the GUI.
+
+  if (options.auto_mini && statusButton->text ().startsWith ("Connected to")) slotStatusButtonClicked (true);
 
 
   //  Now that the GUI is set up, go ahead and connect this signal.  If it was done earlier
@@ -467,7 +483,7 @@ qexpressvpn::slotCurrentTabChanged (int index)
 
 
 
-      //  Now we do the full list (or just "recommended" if we need to.
+      //  Now we do the full list.
 
       misc.current_process = "list";
       misc.process_ext = "";
@@ -486,6 +502,7 @@ qexpressvpn::slotCurrentTabChanged (int index)
 
       qexpressvpnProc->start (misc.progName, arguments);
 
+      qexpressvpnProc->waitForFinished ();
 
       break;
 
@@ -597,6 +614,11 @@ qexpressvpn::slotConnectClicked (bool checked __attribute__ ((unused)))
       //  Now, we need to update the "recent" list...  This is a shortcut ;-)
 
       slotCurrentTabChanged (CONN_TAB);
+
+
+      //  If the auto minimize option is set we want to minimize the GUI.
+
+      if (options.auto_mini) slotStatusButtonClicked (true);
     }
 }
 
@@ -1338,6 +1360,23 @@ qexpressvpn::slotStayOnTop (int state)
   else
     {
       options.stay_on_top = false;
+    }
+}
+
+
+
+//  Toggle the auto minimize value
+
+void
+qexpressvpn::slotAutoMini (int state)
+{
+  if (state == Qt::Checked)
+    {
+      options.auto_mini = true;
+    }
+  else
+    {
+      options.auto_mini = false;
     }
 }
 

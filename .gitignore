@@ -5,3 +5,4 @@ moc_*
 Makefile
 qrc_resources*
 cleanit
+mk_static
