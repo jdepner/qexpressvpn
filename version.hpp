@@ -66,6 +66,8 @@
     Jan C. Depner (PFM Software)
     09/04/17
 
-    Added Preferences option to automatically minimize (to the status button) on connect.
+    - Added Preferences option to automatically minimize (to the status button) on connect.
+    - Rearranged the Preferences so they weren't just stacked up.
+    - Made getStatus wait until the status file was read prior to returning.
 
 </pre>*/

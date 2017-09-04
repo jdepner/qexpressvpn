@@ -202,33 +202,40 @@ qexpressvpn::qexpressvpn (QWidget *parent, QString translatorName):
   prefBox->setLayout (prefBoxLayout);
 
 
+  QHBoxLayout *colorsLayout = new QHBoxLayout (0);
+  prefBoxLayout->addLayout (colorsLayout);
+
   bServerColor = new QPushButton (tr ("Server color"), this);
   bServerColor->setToolTip (tr ("Change color used for non-selected server buttons"));
   bServerColor->setWhatsThis (tr ("Select the color that you want to use for server buttons that are not selected.<br><br>"
                                   "<b>Major hint: don't set this to be the same as the connected or disconnected color.</b>"));
   connect (bServerColor, SIGNAL (clicked ()), this, SLOT (slotServerColor ()));
-  prefBoxLayout->addWidget (bServerColor);
+  colorsLayout->addWidget (bServerColor);
 
   bConnectedColor = new QPushButton (tr ("Connected color"), this);
   bConnectedColor->setToolTip (tr ("Change connected color"));
   bConnectedColor->setWhatsThis (tr ("Select the color that you want to use for the connect button, the selected server "
                                      "button, and the status button when connected to a server."));
   connect (bConnectedColor, SIGNAL (clicked ()), this, SLOT (slotConnectedColor ()));
-  prefBoxLayout->addWidget (bConnectedColor);
+  colorsLayout->addWidget (bConnectedColor);
 
   bDisconnectedColor = new QPushButton (tr ("Disconnected color"), this);
   bDisconnectedColor->setToolTip (tr ("Change disconnected color"));
   bDisconnectedColor->setWhatsThis (tr ("Select the color that you want to use for the disconnect button, the selected server "
                                         "button, and the status button when not connected to a server."));
   connect (bDisconnectedColor, SIGNAL (clicked ()), this, SLOT (slotDisconnectedColor ()));
-  prefBoxLayout->addWidget (bDisconnectedColor);
+  colorsLayout->addWidget (bDisconnectedColor);
+
+
+  QHBoxLayout *miscLayout = new QHBoxLayout (0);
+  prefBoxLayout->addLayout (miscLayout);
 
   bFont = new QPushButton (this);
   bFont->setToolTip (tr ("Change font for qexpressvpn"));
   bFont->setWhatsThis (tr ("Click this button to change the font used for text in the application."));
   bFont->setText (tr ("Font: ") + options.font.toString ());
   connect (bFont, SIGNAL (clicked ()), this, SLOT (slotFont ()));
-  prefBoxLayout->addWidget (bFont);
+  miscLayout->addWidget (bFont);
 
   protocol = new QComboBox (this);
   protocol->setToolTip (tr ("Change preferred protocol for ExpressVPN Linux client"));
@@ -242,7 +249,7 @@ qexpressvpn::qexpressvpn (QWidget *parent, QString translatorName):
   protocol->addItem (tr ("Protocol: TCP"));
   protocol->setCurrentIndex (options.preferred_protocol);
   connect (protocol, SIGNAL (currentIndexChanged (int)), this, SLOT (slotProtocolChanged (int)));
-  prefBoxLayout->addWidget (protocol);
+  miscLayout->addWidget (protocol);
 
 
   QHBoxLayout *checksLayout = new QHBoxLayout (0);
@@ -359,7 +366,7 @@ qexpressvpn::qexpressvpn (QWidget *parent, QString translatorName):
 
   //  If the user has selected the "auto minimize" option and we are connected to a server, go ahead and minimize the GUI.
 
-  if (options.auto_mini && statusButton->text ().startsWith ("Connected to")) slotStatusButtonClicked (true);
+  if (options.auto_mini && misc.connected) slotStatusButtonClicked (true);
 
 
   //  Now that the GUI is set up, go ahead and connect this signal.  If it was done earlier
@@ -433,6 +440,38 @@ qexpressvpn::getStatus ()
 
 
   qexpressvpnProc->waitForFinished ();
+
+
+  //  Even though the process is finished we still need to get the status information from the file...
+
+  QFile temp_file (tempFileName);
+
+  if (!temp_file.open (QIODevice::ReadOnly | QIODevice::Text))
+    {
+      QMessageBox::critical (this, "qexpressvpn",
+                             tr ("Unable to open temporary file %1").arg (QString (tempFileName)));
+      return;
+    }
+
+
+  QTextStream temp_str (&temp_file);
+
+  QString txt = temp_str.readLine ();
+
+  misc.status = txt.remove ("\n");
+
+  statusButton->setText (misc.status);
+
+  if (txt.contains ("Not connected"))
+    {
+      misc.connected = false;
+    }
+  else
+    {
+      misc.connected = true;
+    }
+
+  temp_file.close ();
 }
 
 
@@ -600,10 +639,10 @@ qexpressvpn::slotConnectClicked (bool checked __attribute__ ((unused)))
   getStatus ();
 
 
-  //  Check the statusButton for the "Connected to" string.  If it's not there, we had a problem so we want to dump
+  //  Check for connected status.  If we're not connected, we had a problem so we want to dump
   //  misc.connectString to a message box.
 
-  if (!statusButton->text ().startsWith ("Connected to"))
+  if (!misc.connected)
     {
       qApp->restoreOverrideCursor ();
 
@@ -1125,38 +1164,10 @@ qexpressvpn::slotProcessDone (int exitCode __attribute__ ((unused)), QProcess::E
     }
   else if (misc.current_process == "status")
     {
-      QFile temp_file (tempFileName);
-
-      if (!temp_file.open (QIODevice::ReadOnly | QIODevice::Text))
-        {
-          QMessageBox::critical (this, "qexpressvpn",
-                                 tr ("Unable to open temporary file %1").arg (QString (tempFileName)));
-          return;
-        }
-
-
-      QTextStream temp_str (&temp_file);
-
-      QString txt = temp_str.readLine ();
-
-      misc.status = txt.remove ("\n");
-
-      statusButton->setText (misc.status);
-
-      if (txt.contains ("Not connected"))
-        {
-          misc.connected = false;
-        }
-      else
-        {
-          misc.connected = true;
-        }
-
-      temp_file.close ();
+      //  Move along.
     }
   else if (misc.current_process == "protocol")
     {
-      //  Move along.
     }
   else
     {
