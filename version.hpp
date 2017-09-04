@@ -69,5 +69,6 @@
     - Added Preferences option to automatically minimize (to the status button) on connect.
     - Rearranged the Preferences so they weren't just stacked up.
     - Made getStatus wait until the status file was read prior to returning.
+    - Throws away any accidental mouse double-clicks on the connect button.
 
 </pre>*/

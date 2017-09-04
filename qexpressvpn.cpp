@@ -57,6 +57,7 @@ qexpressvpn::qexpressvpn (QWidget *parent, QString translatorName):
   serverTable = NULL;
   normal_exit = false;
   misc.translatorName = translatorName;
+  connecting = false;
 
 
   //  Trying to make QToolTips easier to read.
@@ -584,6 +585,12 @@ qexpressvpn::slotCurrentTabChanged (int index)
 void 
 qexpressvpn::slotConnectClicked (bool checked __attribute__ ((unused)))
 {
+  //  This protects against accidental (or screwy mouse) double-clicks.
+
+  if (connecting) return;
+  connecting = true;
+
+
   qApp->setOverrideCursor (Qt::WaitCursor);
   qApp->processEvents ();
 
@@ -659,6 +666,8 @@ qexpressvpn::slotConnectClicked (bool checked __attribute__ ((unused)))
 
       if (options.auto_mini) slotStatusButtonClicked (true);
     }
+
+  connecting = false;
 }
 
 

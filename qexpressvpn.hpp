@@ -94,7 +94,7 @@ protected:
 
   statusDialog    *statusDialogD;
 
-  uint8_t         normal_exit;
+  uint8_t         normal_exit, connecting;
 
 
   void getStatus ();
