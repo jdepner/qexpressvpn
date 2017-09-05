@@ -26,7 +26,7 @@
 
 #ifndef VERSION
 
-#define     VERSION     "PFM Software - qexpressvpn V1.04 - 09/04/17"
+#define     VERSION     "PFM Software - qexpressvpn V1.05 - 09/05/17"
 
 #endif
 
@@ -70,5 +70,13 @@
     - Rearranged the Preferences so they weren't just stacked up.
     - Made getStatus wait until the status file was read prior to returning.
     - Throws away any accidental mouse double-clicks on the connect button.
+
+
+    Version 1.05
+    Jan C. Depner (PFM Software)
+    09/05/17
+
+    Moved statusButton text setting to setWidgetStates so that changes to the text and color occur 
+    more smoothly.
 
 </pre>*/

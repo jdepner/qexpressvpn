@@ -459,9 +459,10 @@ qexpressvpn::getStatus ()
 
   QString txt = temp_str.readLine ();
 
-  misc.status = txt.remove ("\n");
 
-  statusButton->setText (misc.status);
+  //  This text will be placed in the status button in setWidgetStates (when we set the statusButton color).
+
+  misc.status = txt.remove ("\n");
 
   if (txt.contains ("Not connected"))
     {
@@ -1563,6 +1564,7 @@ qexpressvpn::setWidgetStates ()
     }
 
   statusButton->setStyleSheet (bc);
+  statusButton->setText (misc.status);
 
   if (misc.server.size ()) serverTable->cellWidget (options.current_server.index, 1)->setStyleSheet (bc);
 
