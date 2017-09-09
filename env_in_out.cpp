@@ -64,6 +64,7 @@ uint8_t envin (OPTIONS *options)
   options->auto_disconnect = settings.value (QString ("auto disconnect"), options->auto_disconnect).toBool ();
   options->stay_on_top = settings.value (QString ("stay on top"), options->stay_on_top).toBool ();
   options->auto_mini = settings.value (QString ("auto mini"), options->auto_mini).toBool ();
+  options->auto_connect = settings.value (QString ("auto connect"), options->auto_connect).toBool ();
 
   QString defaultFont = options->font.toString ();
   QString fontString = settings.value (QString ("font"), defaultFont).toString ();
@@ -128,6 +129,7 @@ void envout (OPTIONS *options)
   settings.setValue (QString ("auto disconnect"), options->auto_disconnect);
   settings.setValue (QString ("stay on top"), options->stay_on_top);
   settings.setValue (QString ("auto mini"), options->auto_mini);
+  settings.setValue (QString ("auto connect"), options->auto_connect);
 
   QString fontString = options->font.toString ();
   settings.setValue (QString ("font"), fontString);

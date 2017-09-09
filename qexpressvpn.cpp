@@ -256,7 +256,19 @@ qexpressvpn::qexpressvpn (QWidget *parent, QString translatorName):
   QHBoxLayout *checksLayout = new QHBoxLayout (0);
   prefBoxLayout->addLayout (checksLayout);
 
-  autoDisconnect = new QCheckBox (tr ("Automatic disconnect on close"), this);
+  autoConnect = new QCheckBox (tr ("Automatic connect"), this);
+  autoConnect->setToolTip (tr ("Toggle automatic connect on open"));
+  autoConnect->setWhatsThis (tr ("Set this button if you would like for qexpressvpn to automatically connect to the "
+                                 "last used ExpressVPN server when you start the program.  If <b>Automatic minimize </b>"
+                                 "is set, and the connection is successful, the GUI will become the minimized "
+                                 "status dialog window."));
+  autoConnect->setCheckable (true);
+  autoConnect->setChecked (options.auto_connect);
+  connect (autoConnect, SIGNAL (stateChanged (int)), this, SLOT (slotAutoConnect (int)));
+  checksLayout->addWidget (autoConnect);
+
+
+  autoDisconnect = new QCheckBox (tr ("Automatic disconnect"), this);
   autoDisconnect->setToolTip (tr ("Toggle automatic disconnect on close"));
   autoDisconnect->setWhatsThis (tr ("Set this button if you would like for qexpressvpn to disconnect from the "
                                     "ExpressVPN server when you exit the program.  If this is unset, "
@@ -265,6 +277,17 @@ qexpressvpn::qexpressvpn (QWidget *parent, QString translatorName):
   autoDisconnect->setChecked (options.auto_disconnect);
   connect (autoDisconnect, SIGNAL (stateChanged (int)), this, SLOT (slotAutoDisconnect (int)));
   checksLayout->addWidget (autoDisconnect);
+
+
+  autoMini = new QCheckBox (tr ("Automatic minimize"), this);
+  autoMini->setToolTip (tr ("Set this to force the GUI to become the status dialog when connected"));
+  autoMini->setWhatsThis (tr ("Set this button if you would like for the GUI to become the minimized status dialog window when connected to a server.<br><br>"
+                              "<b>NOTE: In this context, 'minimize' does not mean to iconify the application.  It means that the GUI becomes just the status button "
+                              "dialog.</b>"));
+  autoMini->setCheckable (true);
+  autoMini->setChecked (options.auto_mini);
+  connect (autoMini, SIGNAL (stateChanged (int)), this, SLOT (slotAutoMini (int)));
+  checksLayout->addWidget (autoMini);
 
 
   stayOnTop = new QCheckBox (tr ("Status dialog on top"), this);
@@ -276,17 +299,6 @@ qexpressvpn::qexpressvpn (QWidget *parent, QString translatorName):
   stayOnTop->setChecked (options.stay_on_top);
   connect (stayOnTop, SIGNAL (stateChanged (int)), this, SLOT (slotStayOnTop (int)));
   checksLayout->addWidget (stayOnTop);
-
-
-  autoMini = new QCheckBox (tr ("Automatic minimize on connect"), this);
-  autoMini->setToolTip (tr ("Set this to force the GUI to become the status dialog when connected"));
-  autoMini->setWhatsThis (tr ("Set this button if you would like for the GUI to become the minimized status dialog window when connected to a server.<br><br>"
-                              "<b>NOTE: In this context, 'minimize' does not mean to iconify the application.  It means that the GUI becomes just the status button "
-                              "dialog.</b>"));
-  autoMini->setCheckable (true);
-  autoMini->setChecked (options.auto_mini);
-  connect (autoMini, SIGNAL (stateChanged (int)), this, SLOT (slotAutoMini (int)));
-  checksLayout->addWidget (autoMini);
 
 
   qexpressvpnTab->addTab (prefBox, tr ("Preferences"));
@@ -374,6 +386,11 @@ qexpressvpn::qexpressvpn (QWidget *parent, QString translatorName):
   //  it would trigger too soon.
 
   connect (qexpressvpnTab, SIGNAL (currentChanged (int)), this, SLOT (slotCurrentTabChanged (int)));
+
+
+  //  If "auto connect" is set, go ahead and try to connect to the last used ExpressVPN server.
+
+  if (options.auto_connect) slotConnectClicked (true);
 }
 
 
@@ -590,6 +607,7 @@ qexpressvpn::slotConnectClicked (bool checked __attribute__ ((unused)))
 
   if (connecting) return;
   connecting = true;
+  bConnect->setEnabled (false);
 
 
   qApp->setOverrideCursor (Qt::WaitCursor);
@@ -1348,6 +1366,23 @@ qexpressvpn::slotProtocolChanged (int index)
 
 
   qexpressvpnProc->waitForFinished ();
+}
+
+
+
+//  Toggle the auto connect value
+
+void
+qexpressvpn::slotAutoConnect (int state)
+{
+  if (state == Qt::Checked)
+    {
+      options.auto_connect = true;
+    }
+  else
+    {
+      options.auto_connect = false;
+    }
 }
 
 

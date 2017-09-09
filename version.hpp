@@ -26,7 +26,7 @@
 
 #ifndef VERSION
 
-#define     VERSION     "PFM Software - qexpressvpn V1.05 - 09/05/17"
+#define     VERSION     "PFM Software - qexpressvpn V1.06 - 09/09/17"
 
 #endif
 
@@ -78,5 +78,12 @@
 
     Moved statusButton text setting to setWidgetStates so that changes to the text and color occur 
     more smoothly.
+
+
+    Version 1.06
+    Jan C. Depner (PFM Software)
+    09/09/17
+
+    Added "Automatic connect" on open option.
 
 </pre>*/
