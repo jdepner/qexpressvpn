@@ -45,6 +45,9 @@ qexpressvpn::qexpressvpn (QWidget *parent, QString translatorName):
   void set_defaults (MISC *misc, OPTIONS *options);
 
 
+  setWindowTitle (VERSION);
+
+
   QResource::registerResource ("/resources.rcc");
 
 
@@ -1513,7 +1516,17 @@ qexpressvpn::slotQuit ()
 
   //  If connected and auto disconnect is on, disconnect.
 
-  if (misc.connected && options.auto_disconnect) slotDisconnectClicked (true);
+  if (misc.connected && options.auto_disconnect)
+    {
+      slotDisconnectClicked (true);
+
+
+      //  Really kind of pointless but it's nice to see the status button change color
+      //  before the program exits.
+
+      setWidgetStates ();
+      qApp->processEvents ();
+    }
 
 
   //  Use frame geometry to get the absolute x and y.

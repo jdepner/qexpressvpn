@@ -26,7 +26,7 @@
 
 #ifndef VERSION
 
-#define     VERSION     "PFM Software - qexpressvpn V1.06 - 09/09/17"
+#define     VERSION     "PFM Software - qexpressvpn V1.07 - 09/11/17"
 
 #endif
 
@@ -85,5 +85,12 @@
     09/09/17
 
     Added "Automatic connect" on open option.
+
+
+    Version 1.07
+    Jan C. Depner (PFM Software)
+    09/11/17
+
+    Forced the status button to change color before exit if "Automatic disconnect" is selected.
 
 </pre>*/
