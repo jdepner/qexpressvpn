@@ -100,5 +100,6 @@
 
     - Added a delay to exit if "Automatic disconnect" is selected.
     - Added a lock file so that only one instance of the program can run.
+    - Removed an unused argument to qexpressvpn.
 
 </pre>*/

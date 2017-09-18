@@ -128,7 +128,6 @@ typedef struct
   QString           connectString;              /*  A place to temporarily store information from the "connect" command in case
                                                     we get an error back.  */
   QIcon             mainIcon;                   //  This is the window icon used for both the main window and the status dialog.
-  QString           translatorName;             //  Translator name (so that we can use the right shortcut for the status button).
 } MISC;
 
 

@@ -48,7 +48,7 @@ class qexpressvpn:public QMainWindow
 
 public:
 
-  qexpressvpn (QWidget *parent = 0, QString translatorName = "");
+  qexpressvpn (QWidget *parent = 0);
   ~qexpressvpn ();
 
 

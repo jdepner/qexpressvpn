@@ -45,7 +45,7 @@ main (int argc, char **argv)
     a.setStyle (QStyleFactory::create ("Plastique"));
 
 
-    qexpressvpn *ac = new qexpressvpn (0, translatorName);
+    qexpressvpn *ac = new qexpressvpn (0);
 
 
     ac->setWindowTitle (VERSION);

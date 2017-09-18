@@ -38,7 +38,7 @@
 
 #include "qexpressvpn.hpp"
 
-qexpressvpn::qexpressvpn (QWidget *parent, QString translatorName):
+qexpressvpn::qexpressvpn (QWidget *parent):
   QMainWindow (parent, 0)
 {
   uint8_t envin (OPTIONS *options);
@@ -59,7 +59,6 @@ qexpressvpn::qexpressvpn (QWidget *parent, QString translatorName):
   qexpressvpnProc = NULL;
   serverTable = NULL;
   normal_exit = false;
-  misc.translatorName = translatorName;
   connecting = false;
 
 
