@@ -105,6 +105,35 @@ qexpressvpn::qexpressvpn (QWidget *parent, QString translatorName):
   tempFileName = QDir::tempPath () + "/" + QString ("qexpressvpn_%1.tmp").arg (misc.process_id);
 
 
+  //  Check to see if qexpressvpn is already running.
+
+  lockFileName = QString (getenv ("HOME")) + "/.qexpressvpn.lock";
+  if (QFileInfo (lockFileName).exists ())
+    {
+      QMessageBox::critical (this, "qexpressvpn",
+                             tr ("qexpressvpn is already running or has crashed.\nIf it is not running please remove the file %1 and try again.").arg (lockFileName));
+      exit (-1);
+    }
+
+
+  //  Create the lock file and put the current date and time in it.
+
+  QFile lock_file (lockFileName);
+
+  if (!lock_file.open (QIODevice::WriteOnly | QIODevice::Text))
+    {
+      QMessageBox::critical (this, "qexpressvpn", tr ("Unable to open lock file %1").arg (lockFileName));
+      exit (-1);
+    }
+
+  QDateTime current_time = QDateTime::currentDateTime ();
+  QTextStream lock_str (&lock_file);
+
+  lock_str << current_time.toString () << "\n";
+
+  lock_file.close ();
+
+
   //  Now let's build the GUI.
 
   QFrame *frame = new QFrame (this, 0);
@@ -391,9 +420,9 @@ qexpressvpn::qexpressvpn (QWidget *parent, QString translatorName):
   connect (qexpressvpnTab, SIGNAL (currentChanged (int)), this, SLOT (slotCurrentTabChanged (int)));
 
 
-  //  If "auto connect" is set, go ahead and try to connect to the last used ExpressVPN server.
+  //  If "auto connect" is set and we're not already connected, go ahead and try to connect to the last used ExpressVPN server.
 
-  if (options.auto_connect) slotConnectClicked (true);
+  if (options.auto_connect && !misc.connected) slotConnectClicked (true);
 }
 
 
@@ -470,7 +499,7 @@ qexpressvpn::getStatus ()
   if (!temp_file.open (QIODevice::ReadOnly | QIODevice::Text))
     {
       QMessageBox::critical (this, "qexpressvpn",
-                             tr ("Unable to open temporary file %1").arg (QString (tempFileName)));
+                             tr ("Unable to open temporary file %1").arg (tempFileName));
       return;
     }
 
@@ -613,6 +642,12 @@ qexpressvpn::slotConnectClicked (bool checked __attribute__ ((unused)))
   bConnect->setEnabled (false);
 
 
+  //  Before we start the process we want to disable the status button.  It will get the status information but we don't want
+  //  anyone clicking it while it is in the process of connecting.
+
+  statusButton->setEnabled (false);
+
+
   qApp->setOverrideCursor (Qt::WaitCursor);
   qApp->processEvents ();
 
@@ -642,12 +677,6 @@ qexpressvpn::slotConnectClicked (bool checked __attribute__ ((unused)))
 
 
   misc.connectString = "";
-
-
-  //  Before we start the process we want to disable the status button.  It will get the status information but we don't want
-  //  anyone clikcing it while it is in the process of connecting.
-
-  statusButton->setEnabled (false);
 
 
   qexpressvpnProc->start (misc.progName, arguments);
@@ -778,6 +807,12 @@ qexpressvpn::slotProcessError (QProcess::ProcessError error)
     case QProcess::FailedToStart:
       QMessageBox::critical (this, "qexpressvpn",
                              tr ("Unable to run the expressvpn program!  Make sure that the directory that contains it is in your PATH."));
+
+
+      //  Get rid of the lock file.
+
+      QFile::remove (lockFileName);
+
       exit (-1);
       break;
 
@@ -1521,11 +1556,16 @@ qexpressvpn::slotQuit ()
       slotDisconnectClicked (true);
 
 
+      qApp->setOverrideCursor (Qt::WaitCursor);
+      qApp->processEvents ();
+
+
       //  Really kind of pointless but it's nice to see the status button change color
       //  before the program exits.
 
       setWidgetStates ();
       qApp->processEvents ();
+      sleep (2);
     }
 
 
@@ -1551,6 +1591,11 @@ qexpressvpn::slotQuit ()
   //  Get rid of the temp file (we don't care if this fails).
 
   QFile::remove (tempFileName);
+
+
+  //  Get rid of the lock file.
+
+  QFile::remove (lockFileName);
 
 
   //  Set this flag so that slotCloseEvent won't loop back on this function.

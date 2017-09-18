@@ -26,7 +26,7 @@
 
 #ifndef VERSION
 
-#define     VERSION     "PFM Software - qexpressvpn V1.07 - 09/11/17"
+#define     VERSION     "PFM Software - qexpressvpn V1.08 - 09/18/17"
 
 #endif
 
@@ -92,5 +92,13 @@
     09/11/17
 
     Forced the status button to change color before exit if "Automatic disconnect" is selected.
+
+
+    Version 1.08
+    Jan C. Depner (PFM Software)
+    09/18/17
+
+    - Added a delay to exit if "Automatic disconnect" is selected.
+    - Added a lock file so that only one instance of the program can run.
 
 </pre>*/

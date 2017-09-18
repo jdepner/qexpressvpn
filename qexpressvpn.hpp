@@ -86,7 +86,7 @@ protected:
 
   QCheckBox       *autoConnect, *autoDisconnect, *stayOnTop, *autoMini;
 
-  QString         serverTextColorString, fontString, arg, tempFileName;
+  QString         serverTextColorString, fontString, arg, tempFileName, lockFileName;
 
   QStringList     arguments;
 
