@@ -892,7 +892,7 @@ qexpressvpn::slotProcessReadyReadStandardOutput ()
 
           //  New version message gets displayed in a message box.
 
-          else if (resp_string.startsWith ("A new version is available"))
+          else if (resp_string.contains ("A new version is available"))
             {
               QMessageBox::information (this, "qexpressvpn", resp_string);
               qApp->processEvents ();
@@ -947,6 +947,23 @@ qexpressvpn::slotProcessDone (int exitCode __attribute__ ((unused)), QProcess::E
           QString txt = temp_str.readLine ();
 
 
+          //  New version message gets displayed in a message box.
+
+          if (txt.contains ("A new version is available"))
+            {
+              QString msg = txt.mid (txt.indexOf ("A new version is available"));
+              QMessageBox::critical (this, "qexpressvpn", msg);
+              qApp->processEvents ();
+
+
+              //  Get rid of the lock file.
+
+              QFile::remove (lockFileName);
+
+              exit (0);
+            }
+
+
           //  Get the first two lines and discard them (after checking for contents)
 
           if (!line_count)
@@ -973,7 +990,7 @@ qexpressvpn::slotProcessDone (int exitCode __attribute__ ((unused)), QProcess::E
             }
           else
             {
-              //  Remove LF  (CR should have been removed by the QTextStream).
+              //  Remove LF (CR should have been removed by the QTextStream).
 
               txt.remove (QRegExp ("[\\n]"));
 
