@@ -26,7 +26,7 @@
 
 #ifndef VERSION
 
-#define     VERSION     "PFM Software - qexpressvpn V1.08 - 09/18/17"
+#define     VERSION     "PFM Software - qexpressvpn V1.09 - 11/28/17"
 
 #endif
 
@@ -101,5 +101,12 @@
     - Added a delay to exit if "Automatic disconnect" is selected.
     - Added a lock file so that only one instance of the program can run.
     - Removed an unused argument to qexpressvpn.
+
+
+    Version 1.09
+    Jan C. Depner (PFM Software)
+    11/28/17
+
+    - Handle 'A new version is available' message from ExpressVPN server.
 
 </pre>*/
