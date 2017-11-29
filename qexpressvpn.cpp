@@ -889,15 +889,6 @@ qexpressvpn::slotProcessReadyReadStandardOutput ()
               qApp->processEvents ();
             }
 
-
-          //  New version message gets displayed in a message box.
-
-          else if (resp_string.contains ("A new version is available"))
-            {
-              QMessageBox::information (this, "qexpressvpn", resp_string);
-              qApp->processEvents ();
-            }
-
           resp_string = "";
         }
       else
