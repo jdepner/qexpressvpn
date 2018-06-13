@@ -26,7 +26,7 @@
 
 #ifndef VERSION
 
-#define     VERSION     "PFM Software - qexpressvpn V1.09 - 11/28/17"
+#define     VERSION     "PFM Software - qexpressvpn V1.10 - 06/13/18"
 
 #endif
 
@@ -108,5 +108,13 @@
     11/28/17
 
     - Handle 'A new version is available' message from ExpressVPN server.
+
+
+
+    Version 1.10
+    Jan C. Depner (PFM Software)
+    06/13/18
+
+    - Added a utility timer so that the GUI will appear prior to trying to connect (I hope).
 
 </pre>*/

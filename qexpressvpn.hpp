@@ -94,7 +94,7 @@ protected:
 
   statusDialog    *statusDialogD;
 
-  uint8_t         normal_exit, connecting;
+  uint8_t         normal_exit, connecting, start_me_up;
 
 
   void getStatus ();
@@ -103,6 +103,8 @@ protected:
 
 
 protected slots:
+
+  void slotTimer ();
 
   void slotCurrentTabChanged (int index);
 

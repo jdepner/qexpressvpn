@@ -60,6 +60,7 @@ qexpressvpn::qexpressvpn (QWidget *parent):
   serverTable = NULL;
   normal_exit = false;
   connecting = false;
+  start_me_up = false;
 
 
   //  Trying to make QToolTips easier to read.
@@ -419,15 +420,38 @@ qexpressvpn::qexpressvpn (QWidget *parent):
   connect (qexpressvpnTab, SIGNAL (currentChanged (int)), this, SLOT (slotCurrentTabChanged (int)));
 
 
-  //  If "auto connect" is set and we're not already connected, go ahead and try to connect to the last used ExpressVPN server.
+  //  If "auto connect" is set and we're not already connected, set the flag so that the timer will start it on the next iteration.
 
-  if (options.auto_connect && !misc.connected) slotConnectClicked (true);
+  if (options.auto_connect && !misc.connected) start_me_up = true;
+
+
+  //  Set the utility timer function.
+
+  qexpressvpnTimer = new QTimer (this);
+  connect (qexpressvpnTimer, SIGNAL (timeout ()), this, SLOT (slotTimer ()));
+  qexpressvpnTimer->start (500);
 }
 
 
 
 qexpressvpn::~qexpressvpn ()
 {
+}
+
+
+
+//  Utility timer slot.
+
+void
+qexpressvpn::slotTimer ()
+{
+  //  If we are autocennecting, do it now.
+
+  if (start_me_up)
+    {
+      slotConnectClicked (true);
+      start_me_up = false;
+    }
 }
 
 
@@ -565,7 +589,6 @@ qexpressvpn::slotCurrentTabChanged (int index)
       qexpressvpnProc->waitForFinished ();
 
 
-
       if (qexpressvpnProc != NULL) delete qexpressvpnProc;
 
       qexpressvpnProc = new QProcess (this);
@@ -590,6 +613,7 @@ qexpressvpn::slotCurrentTabChanged (int index)
 
 
       qexpressvpnProc->start (misc.progName, arguments);
+
 
       qexpressvpnProc->waitForFinished ();
 
