@@ -26,7 +26,7 @@
 
 #ifndef VERSION
 
-#define     VERSION     "PFM Software - qexpressvpn V1.10 - 06/13/18"
+#define     VERSION     "PFM Software - qexpressvpn V1.11 - 10/12/18"
 
 #endif
 
@@ -116,5 +116,14 @@
     06/13/18
 
     - Added a utility timer so that the GUI will appear prior to trying to connect (I hope).
+
+
+    Version 1.11
+    Jan C. Depner (PFM Software)
+    10/12/18
+
+    - Remove ECMA text formatting junk from status information so it doesn't show up in the 
+      statusButton.  As of expressvpn 1.5, ECMA stuff has been added to some of the status 
+      messages.
 
 </pre>*/

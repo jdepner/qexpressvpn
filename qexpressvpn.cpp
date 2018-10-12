@@ -532,6 +532,18 @@ qexpressvpn::getStatus ()
   QString txt = temp_str.readLine ();
 
 
+  //  Get rid of the ECMA-48 Set Graphics Rendition (SGR) ESCAPE sequences.  These are used by the
+  //  ExpressVPN Linux client to change the color/characteristics of the text going to the terminal.
+  //  They always start with "\u001B[" and end with "m".
+
+  while (txt.contains ("\u001B["))
+    {
+      int32_t start = txt.indexOf ("\u001B[");
+      int32_t end = txt.indexOf ("m", start);
+      if (start >= 0) txt.remove (start, (end - start) + 1);
+    }
+
+
   //  This text will be placed in the status button in setWidgetStates (when we set the statusButton color).
 
   misc.status = txt.remove ("\n");
@@ -889,13 +901,12 @@ qexpressvpn::slotProcessReadyReadStandardOutput ()
           //  ExpressVPN Linux client to change the color/characteristics of the text going to the terminal.
           //  They always start with "\u001B[" and end with "m".
 
-          int32_t start = resp_string.indexOf ("\u001B[");
-          int32_t end = resp_string.indexOf ("m", start);
-          if (start >= 0) resp_string.remove (start, (end - start) + 1);
-
-          start = resp_string.indexOf ("\u001B[");
-          end = resp_string.indexOf ("m", start);
-          if (start >= 0) resp_string.remove (start, (end - start) + 1);
+          while (resp_string.contains ("\u001B["))
+            {
+              int32_t start = resp_string.indexOf ("\u001B[");
+              int32_t end = resp_string.indexOf ("m", start);
+              if (start >= 0) resp_string.remove (start, (end - start) + 1);
+            }
 
 
           //  Append the string to the connectString in case we have to dump an error message.
