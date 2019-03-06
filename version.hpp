@@ -26,7 +26,7 @@
 
 #ifndef VERSION
 
-#define     VERSION     "PFM Software - qexpressvpn V1.11 - 10/12/18"
+#define     VERSION     "PFM Software - qexpressvpn V2.00 - 03/06/19"
 
 #endif
 
@@ -125,5 +125,13 @@
     - Remove ECMA text formatting junk from status information so it doesn't show up in the 
       statusButton.  As of expressvpn 1.5, ECMA stuff has been added to some of the status 
       messages.
+
+
+    Version 2.00
+    Jan C. Depner (PFM Software)
+    03/06/19
+
+    - Added "all" to list command to allow qexpressvpn to work with new version of
+      expressvpn (specifically, 2.0.0).
 
 </pre>*/

@@ -9,6 +9,7 @@ qmake -project -o qexpressvpn.tmp
 cat >qexpressvpn.pro <<EOF
 QT += widgets
 CONFIG += console
+CONFIG += -no-pie
 CODECFORSRC = UTF-8
 EOF
 

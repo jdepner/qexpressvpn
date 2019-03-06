@@ -610,7 +610,7 @@ qexpressvpn::slotCurrentTabChanged (int index)
       //  Now we do the full list.
 
       misc.current_process = "list";
-      misc.process_ext = "";
+      misc.process_ext = "all";
 
 
       qexpressvpnProc->setStandardOutputFile (tempFileName);
@@ -618,6 +618,7 @@ qexpressvpn::slotCurrentTabChanged (int index)
 
       arguments.clear ();
       arguments += misc.current_process;
+      arguments += misc.process_ext;
 
 
       connect (qexpressvpnProc, SIGNAL (finished (int, QProcess::ExitStatus)), this, SLOT (slotProcessDone (int, QProcess::ExitStatus)));
