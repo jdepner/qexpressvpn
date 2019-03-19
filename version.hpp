@@ -26,7 +26,7 @@
 
 #ifndef VERSION
 
-#define     VERSION     "PFM Software - qexpressvpn V2.00 - 03/06/19"
+#define     VERSION     "PFM Software - qexpressvpn V2.01 - 03/19/19"
 
 #endif
 
@@ -133,5 +133,12 @@
 
     - Added "all" to list command to allow qexpressvpn to work with new version of
       expressvpn (specifically, 2.0.0).
+
+
+    Version 2.01
+    Jan C. Depner (PFM Software)
+    03/19/19
+
+    - Had to add code to deal with some more ANSI escape sequences in the expressvpn output.
 
 </pre>*/

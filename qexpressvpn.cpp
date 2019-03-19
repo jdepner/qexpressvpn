@@ -534,12 +534,20 @@ qexpressvpn::getStatus ()
 
   //  Get rid of the ECMA-48 Set Graphics Rendition (SGR) ESCAPE sequences.  These are used by the
   //  ExpressVPN Linux client to change the color/characteristics of the text going to the terminal.
-  //  They always start with "\u001B[" and end with "m".
+  //  They always start with "\u001B[" and end with "l" or "m".
 
   while (txt.contains ("\u001B["))
     {
       int32_t start = txt.indexOf ("\u001B[");
-      int32_t end = txt.indexOf ("m", start);
+      int32_t end = start;
+      if (txt.indexOf ("m", start))
+        {
+          end = txt.indexOf ("m", start);
+        }
+      else if (txt.indexOf ("l", start))
+        {
+          end = txt.indexOf ("l", start);
+        }
       if (start >= 0) txt.remove (start, (end - start) + 1);
     }
 
@@ -705,7 +713,6 @@ qexpressvpn::slotConnectClicked (bool checked __attribute__ ((unused)))
   arguments.clear ();
   arguments += misc.current_process;
   arguments += options.current_server.alias;
-
 
   connect (qexpressvpnProc, SIGNAL (finished (int, QProcess::ExitStatus)), this, SLOT (slotProcessDone (int, QProcess::ExitStatus)));
   connect (qexpressvpnProc, SIGNAL (readyReadStandardOutput ()), this, SLOT (slotProcessReadyReadStandardOutput ()));
@@ -900,12 +907,20 @@ qexpressvpn::slotProcessReadyReadStandardOutput ()
         {
           //  Get rid of the ECMA-48 Set Graphics Rendition (SGR) ESCAPE sequences.  These are used by the
           //  ExpressVPN Linux client to change the color/characteristics of the text going to the terminal.
-          //  They always start with "\u001B[" and end with "m".
+          //  They always start with "\u001B[" and end with "l" or "m".
 
           while (resp_string.contains ("\u001B["))
             {
               int32_t start = resp_string.indexOf ("\u001B[");
-              int32_t end = resp_string.indexOf ("m", start);
+              int32_t end = start;
+              if (resp_string.indexOf ("m", start))
+                {
+                  end = resp_string.indexOf ("m", start);
+                }
+              else if (resp_string.indexOf ("l", start))
+                {
+                  end = resp_string.indexOf ("l", start);
+                }
               if (start >= 0) resp_string.remove (start, (end - start) + 1);
             }
 
