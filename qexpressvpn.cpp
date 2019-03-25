@@ -534,21 +534,23 @@ qexpressvpn::getStatus ()
 
   //  Get rid of the ECMA-48 Set Graphics Rendition (SGR) ESCAPE sequences.  These are used by the
   //  ExpressVPN Linux client to change the color/characteristics of the text going to the terminal.
-  //  They always start with "\u001B[" and end with "l" or "m".
+  //  They always start with "\u001B[" and end with "l", "m", or "h".
 
   while (txt.contains ("\u001B["))
     {
       int32_t start = txt.indexOf ("\u001B[");
-      int32_t end = start;
-      if (txt.indexOf ("m", start))
-        {
-          end = txt.indexOf ("m", start);
-        }
-      else if (txt.indexOf ("l", start))
-        {
-          end = txt.indexOf ("l", start);
-        }
-      if (start >= 0) txt.remove (start, (end - start) + 1);
+
+      int32_t loc_l = txt.indexOf ("l", start);
+      int32_t loc_h = txt.indexOf ("h", start);
+      int32_t loc_m = txt.indexOf ("m", start);
+
+      if (loc_l < 0) loc_l = 99;
+      if (loc_h < 0) loc_h = 99;
+      if (loc_m < 0) loc_m = 99;
+
+      int32_t end = (qMin (qMin (loc_l, loc_h), loc_m));
+
+      txt.remove (start, (end - start) + 1);
     }
 
 
@@ -907,20 +909,22 @@ qexpressvpn::slotProcessReadyReadStandardOutput ()
         {
           //  Get rid of the ECMA-48 Set Graphics Rendition (SGR) ESCAPE sequences.  These are used by the
           //  ExpressVPN Linux client to change the color/characteristics of the text going to the terminal.
-          //  They always start with "\u001B[" and end with "l" or "m".
+          //  They always start with "\u001B[" and end with "l", "m", or "h".
 
           while (resp_string.contains ("\u001B["))
             {
               int32_t start = resp_string.indexOf ("\u001B[");
-              int32_t end = start;
-              if (resp_string.indexOf ("m", start))
-                {
-                  end = resp_string.indexOf ("m", start);
-                }
-              else if (resp_string.indexOf ("l", start))
-                {
-                  end = resp_string.indexOf ("l", start);
-                }
+
+              int32_t loc_l = resp_string.indexOf ("l", start);
+              int32_t loc_h = resp_string.indexOf ("h", start);
+              int32_t loc_m = resp_string.indexOf ("m", start);
+
+              if (loc_l < 0) loc_l = 99;
+              if (loc_h < 0) loc_h = 99;
+              if (loc_m < 0) loc_m = 99;
+
+              int32_t end = (qMin (qMin (loc_l, loc_h), loc_m));
+
               if (start >= 0) resp_string.remove (start, (end - start) + 1);
             }
 

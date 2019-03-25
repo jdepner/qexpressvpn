@@ -26,7 +26,7 @@
 
 #ifndef VERSION
 
-#define     VERSION     "PFM Software - qexpressvpn V2.01 - 03/19/19"
+#define     VERSION     "PFM Software - qexpressvpn V2.02 - 03/25/19"
 
 #endif
 
@@ -140,5 +140,12 @@
     03/19/19
 
     - Had to add code to deal with some more ANSI escape sequences in the expressvpn output.
+
+
+    Version 2.02
+    Jan C. Depner (PFM Software)
+    03/25/19
+
+    - OK, maybe this time I've got the ANSI escape sequence crap right.
 
 </pre>*/
