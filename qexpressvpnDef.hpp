@@ -121,6 +121,9 @@ typedef struct
   QString           process_ext;                //  Process extension.  For second argument on expressvpn calls.
   uint8_t           connected;                  //  This is true if connected to a server
   QString           status;                     //  Status of the ExpressVPN connection
+  uint32_t          major_version;              //  Major version number of expressvpn client
+  uint32_t          minor_version;              //  Minor version number of expressvpn client
+  uint32_t          list_all_loc[4];            //  Locations of start of string in "list all" output (for expressvpn v2.1.x and higher)
   QString           connectedTextColorString;
   QString           disconnectedTextColorString;
   QString           fontString;

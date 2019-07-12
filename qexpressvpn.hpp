@@ -97,6 +97,7 @@ protected:
   uint8_t         normal_exit, connecting, start_me_up;
 
 
+  void getVersion ();
   void getStatus ();
   void setWidgetStates ();
   void closeEvent (QCloseEvent *event);

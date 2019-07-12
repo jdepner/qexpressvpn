@@ -391,6 +391,11 @@ qexpressvpn::qexpressvpn (QWidget *parent):
   actions->addWidget (quitButton);
 
 
+  //  Get the current version...
+
+  getVersion ();
+
+
   //  Get the current status...
 
   getStatus ();
@@ -479,6 +484,89 @@ qexpressvpn::keyPressEvent (QKeyEvent *e)
     }
 
   e->accept ();
+}
+
+
+
+//  Get the current status
+
+void 
+qexpressvpn::getVersion ()
+{
+  qApp->setOverrideCursor (Qt::WaitCursor);
+  qApp->processEvents ();
+
+  if (qexpressvpnProc != NULL) delete qexpressvpnProc;
+
+  qexpressvpnProc = new QProcess (this);
+
+  misc.current_process = "--version";
+
+
+  qexpressvpnProc->setStandardOutputFile (tempFileName);
+
+
+  arguments.clear ();
+  arguments += misc.current_process;
+
+
+  connect (qexpressvpnProc, SIGNAL (finished (int, QProcess::ExitStatus)), this, SLOT (slotProcessDone (int, QProcess::ExitStatus)));
+  connect (qexpressvpnProc, SIGNAL (error (QProcess::ProcessError)), this, SLOT (slotProcessError (QProcess::ProcessError)));
+
+
+  qexpressvpnProc->start (misc.progName, arguments);
+
+
+  qexpressvpnProc->waitForFinished ();
+
+
+  //  Even though the process is finished we still need to get the status information from the file...
+
+  QFile temp_file (tempFileName);
+
+  if (!temp_file.open (QIODevice::ReadOnly | QIODevice::Text))
+    {
+      QMessageBox::critical (this, "qexpressvpn",
+                             tr ("Unable to open temporary file %1").arg (tempFileName));
+      return;
+    }
+
+
+  QTextStream temp_str (&temp_file);
+
+  QString txt = temp_str.readLine ();
+
+
+  //  Get rid of the ECMA-48 Set Graphics Rendition (SGR) ESCAPE sequences.  These are used by the
+  //  ExpressVPN Linux client to change the color/characteristics of the text going to the terminal.
+  //  They always start with "\u001B[" and end with "l", "m", or "h".
+
+  while (txt.contains ("\u001B["))
+    {
+      int32_t start = txt.indexOf ("\u001B[");
+
+      int32_t loc_l = txt.indexOf ("l", start);
+      int32_t loc_h = txt.indexOf ("h", start);
+      int32_t loc_m = txt.indexOf ("m", start);
+
+      if (loc_l < 0) loc_l = 99;
+      if (loc_h < 0) loc_h = 99;
+      if (loc_m < 0) loc_m = 99;
+
+      int32_t end = (qMin (qMin (loc_l, loc_h), loc_m));
+
+      txt.remove (start, (end - start) + 1);
+    }
+
+
+  txt.remove ("\n");
+
+  QStringList txtList = txt.split (' ');
+
+  misc.major_version = txtList.at (2).split ('.').at (0).toUInt ();
+  misc.minor_version = txtList.at (2).split ('.').at (1).toUInt ();
+
+  temp_file.close ();
 }
 
 
@@ -1033,6 +1121,28 @@ qexpressvpn::slotProcessDone (int exitCode __attribute__ ((unused)), QProcess::E
                   temp_file.close ();
                   return;
                 }
+
+
+              //  Get the locations of the strings in "list all"
+
+              if (misc.major_version == 2 && misc.minor_version >=1 && misc.process_ext == "all")
+                {
+                  uint32_t pos = 0, i = 0;
+                  while (pos < 4)
+                    {
+                      if (txt.at (i) == '-')
+                        {
+                          misc.list_all_loc[pos] = i;
+                          pos++;
+
+                          while (txt.at (i) != ' ') i++;
+                        }
+                      else
+                        {
+                          i++;
+                        }
+                    }
+                }
             }
           else
             {
@@ -1041,10 +1151,31 @@ qexpressvpn::slotProcessDone (int exitCode __attribute__ ((unused)), QProcess::E
               txt.remove (QRegExp ("[\\n]"));
 
 
-              //  Split the line based on TAB characters
+              QStringList txtList;
 
-              QStringList txtList = txt.split ('\t', QString::SkipEmptyParts);
 
+              //  Version earlier than 2.1 used tabs to delimit fields.  Later they just used spaces.
+
+              if (misc.major_version == 2 && misc.minor_version >=1 && misc.process_ext == "all")
+                {
+                  txtList.clear ();
+                  txtList << txt.mid (misc.list_all_loc[0], misc.list_all_loc[1] - misc.list_all_loc[0]).simplified ();
+
+                  QString second = txt.mid (misc.list_all_loc[1], misc.list_all_loc[2] - misc.list_all_loc[1]).simplified ();
+
+                  if (second != "") txtList << second;
+
+                  txtList << txt.mid (misc.list_all_loc[2], misc.list_all_loc[3] - misc.list_all_loc[2]).simplified ();
+
+                  QString fourth = txt.mid (misc.list_all_loc[3], 999).simplified ();
+                  if (fourth != "") txtList << fourth;
+                }
+              else
+                {
+                  //  Split the line based on TAB characters
+
+                  txtList = txt.split ('\t', QString::SkipEmptyParts);
+                }
 
               SERVER server;
 
@@ -1123,7 +1254,7 @@ qexpressvpn::slotProcessDone (int exitCode __attribute__ ((unused)), QProcess::E
                           else
                             {
                               QMessageBox::critical (this, "qexpressvpn",
-                                                     tr ("Temporary file %1 entry %2 is unknown").arg (tempFileName).arg (txt));
+                                                     tr ("Temporary file %1 entry:\n%2 is unknown").arg (tempFileName).arg (txt));
                               temp_file.close ();
                               return;
                             }
@@ -1136,6 +1267,7 @@ qexpressvpn::slotProcessDone (int exitCode __attribute__ ((unused)), QProcess::E
 
           line_count++;
         }
+
 
       temp_file.close ();
 
@@ -1300,6 +1432,10 @@ qexpressvpn::slotProcessDone (int exitCode __attribute__ ((unused)), QProcess::E
       //  He can go about his business...
     }
   else if (misc.current_process == "status")
+    {
+      //  Move along.
+    }
+  else if (misc.current_process == "--version")
     {
       //  Move along.
     }

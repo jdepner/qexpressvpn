@@ -26,7 +26,7 @@
 
 #ifndef VERSION
 
-#define     VERSION     "PFM Software - qexpressvpn V2.02 - 03/25/19"
+#define     VERSION     "PFM Software - qexpressvpn V2.03 - 07/12/19"
 
 #endif
 
@@ -147,5 +147,15 @@
     03/25/19
 
     - OK, maybe this time I've got the ANSI escape sequence crap right.
+
+
+    Version 2.03
+    Jan C. Depner (PFM Software)
+    07/12/19
+
+    - As of version 2.1.0 of the Linux expressvpn client the "list all" output is separated
+      by spaces instead of tabs (like all the other "list" outputs.  I have complained to
+      ExpressVPN so maybe they'll change it back next time.  Until then I've had to add a
+      version check and look for 2.1.0 or greater and parse the strings differently.
 
 </pre>*/
