@@ -123,7 +123,7 @@ typedef struct
   QString           status;                     //  Status of the ExpressVPN connection
   uint32_t          major_version;              //  Major version number of expressvpn client
   uint32_t          minor_version;              //  Minor version number of expressvpn client
-  uint32_t          list_all_loc[4];            //  Locations of start of string in "list all" output (for expressvpn v2.1.x and higher)
+  uint32_t          list_loc[4];                //  Locations of start of strings in "list" output (space delimiters instead of tabs)
   QString           connectedTextColorString;
   QString           disconnectedTextColorString;
   QString           fontString;

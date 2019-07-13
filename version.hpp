@@ -26,7 +26,7 @@
 
 #ifndef VERSION
 
-#define     VERSION     "PFM Software - qexpressvpn V2.03 - 07/12/19"
+#define     VERSION     "PFM Software - qexpressvpn V2.04 - 07/13/19"
 
 #endif
 
@@ -157,5 +157,15 @@
       by spaces instead of tabs (like all the other "list" outputs.  I have complained to
       ExpressVPN so maybe they'll change it back next time.  Until then I've had to add a
       version check and look for 2.1.0 or greater and parse the strings differently.
+
+
+    Version 2.04
+    Jan C. Depner (PFM Software)
+    07/13/19
+
+    - I thought of a better way to deal with the version 2.1.0 problem.  I check the -----
+      header line for tabs.  Hopefully, this will deal with any changes they make to "list"
+      output other than "all" if they change things in the future.  I'm leaving the
+      get_version function in the program for possible future problems.
 
 </pre>*/

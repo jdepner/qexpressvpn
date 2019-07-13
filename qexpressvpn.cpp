@@ -1048,6 +1048,9 @@ qexpressvpn::slotProcessReadyReadStandardOutput ()
 void 
 qexpressvpn::slotProcessDone (int exitCode __attribute__ ((unused)), QProcess::ExitStatus exitStatus __attribute__ ((unused)))
 {
+  uint8_t tab_delimiters = true;
+
+
   if (qexpressvpnProc->exitCode ()) return;
 
 
@@ -1123,16 +1126,23 @@ qexpressvpn::slotProcessDone (int exitCode __attribute__ ((unused)), QProcess::E
                 }
 
 
-              //  Get the locations of the strings in "list all"
+              //  As of version 2.1.0 ExpressVPN has used spaces to delimit the string in the "list all" listing.
+              //  They used to use tabs.  As of 2.1.0, only the "list all" listing uses spaces and all the others
+              //  use tabs.  I had originally used the version to decide which to use but it makes more sense to
+              //  look for tab characters in the line so that, if they change the other "list" delimiters to
+              //  spaces, we will still split them correctly based on the locations of the ----- strings in the 
+              //  second line.  If they ever mix them we're in deep kimchee.
 
-              if (misc.major_version == 2 && misc.minor_version >=1 && misc.process_ext == "all")
+              if (!txt.contains ('\t'))
                 {
+                  tab_delimiters = false;
+
                   uint32_t pos = 0, i = 0;
                   while (pos < 4)
                     {
                       if (txt.at (i) == '-')
                         {
-                          misc.list_all_loc[pos] = i;
+                          misc.list_loc[pos] = i;
                           pos++;
 
                           while (txt.at (i) != ' ') i++;
@@ -1154,20 +1164,21 @@ qexpressvpn::slotProcessDone (int exitCode __attribute__ ((unused)), QProcess::E
               QStringList txtList;
 
 
-              //  Version earlier than 2.1 used tabs to delimit fields.  Later they just used spaces.
+              //  Versions earlier than 2.1.0 used tabs to delimit all "list" fields.  Later some of them used spaces
+              //  (some of them, DOH!).
 
-              if (misc.major_version == 2 && misc.minor_version >=1 && misc.process_ext == "all")
+              if (!tab_delimiters)
                 {
                   txtList.clear ();
-                  txtList << txt.mid (misc.list_all_loc[0], misc.list_all_loc[1] - misc.list_all_loc[0]).simplified ();
+                  txtList << txt.mid (misc.list_loc[0], misc.list_loc[1] - misc.list_loc[0]).simplified ();
 
-                  QString second = txt.mid (misc.list_all_loc[1], misc.list_all_loc[2] - misc.list_all_loc[1]).simplified ();
+                  QString second = txt.mid (misc.list_loc[1], misc.list_loc[2] - misc.list_loc[1]).simplified ();
 
                   if (second != "") txtList << second;
 
-                  txtList << txt.mid (misc.list_all_loc[2], misc.list_all_loc[3] - misc.list_all_loc[2]).simplified ();
+                  txtList << txt.mid (misc.list_loc[2], misc.list_loc[3] - misc.list_loc[2]).simplified ();
 
-                  QString fourth = txt.mid (misc.list_all_loc[3], 999).simplified ();
+                  QString fourth = txt.mid (misc.list_loc[3], 999).simplified ();
                   if (fourth != "") txtList << fourth;
                 }
               else
