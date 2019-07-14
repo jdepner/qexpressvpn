@@ -94,7 +94,7 @@ protected:
 
   statusDialog    *statusDialogD;
 
-  uint8_t         normal_exit, connecting, start_me_up;
+  uint8_t         normal_exit, busy, start_me_up, invert;
 
 
   void getVersion ();
@@ -120,6 +120,7 @@ protected slots:
   void slotProcessReadyReadStandardOutput ();
   void slotProcessDone (int exitCode, QProcess::ExitStatus exitStatus);
 
+  void slotHeaderClicked (int logicalIndex);
   void slotServerColor ();
   void slotConnectedColor ();
   void slotDisconnectedColor ();

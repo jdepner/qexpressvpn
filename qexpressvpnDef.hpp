@@ -95,6 +95,7 @@ typedef struct
                                                 //  when you open the program.
   uint8_t           stay_on_top;                //  Set to true if the user wants the statusDialog to stay on top of other windows (depending on window manager)
   uint8_t           auto_mini;                  //  Set to true if the user wants the GUI to automatically become just the status dialog on connect
+  uint8_t           sort_direction;             //  Sort direction (based on location name), 0 = ascending, 1 = descending;
 
   int32_t           window_width;               //  Main window width
   int32_t           window_height;              //  Main window height

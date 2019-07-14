@@ -52,6 +52,7 @@ void set_defaults (MISC *misc, OPTIONS *options)
   options->stay_on_top = false;
   options->auto_mini = false;
   options->auto_connect = false;
+  options->sort_direction = 0;
 
   options->window_width = 645;
   options->window_height = 700;

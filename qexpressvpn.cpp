@@ -37,6 +37,19 @@
 \***************************************************************************/
 
 #include "qexpressvpn.hpp"
+#include <algorithm>
+
+bool ascendingLocations (const SERVER& a, const SERVER& b)
+{
+    return a.location < b.location;
+}
+
+
+bool descendingLocations (const SERVER& a, const SERVER& b)
+{
+    return b.location < a.location;
+}
+
 
 qexpressvpn::qexpressvpn (QWidget *parent):
   QMainWindow (parent, 0)
@@ -59,8 +72,9 @@ qexpressvpn::qexpressvpn (QWidget *parent):
   qexpressvpnProc = NULL;
   serverTable = NULL;
   normal_exit = false;
-  connecting = false;
+  busy = false;
   start_me_up = false;
+  invert = false;
 
 
   //  Trying to make QToolTips easier to read.
@@ -457,6 +471,18 @@ qexpressvpn::slotTimer ()
       slotConnectClicked (true);
       start_me_up = false;
     }
+
+
+  //  This has to be done outside of the slotHeaderClicked (i.e. invert) function because
+  //  the serverTable gets rebuilt.  The serverTable is where slotHeaderClicked is connected.
+
+  if (invert)
+    {
+      invert = false;
+      slotCurrentTabChanged (CONN_TAB);
+      qApp->restoreOverrideCursor ();
+      busy = false;
+    }
 }
 
 
@@ -771,8 +797,8 @@ qexpressvpn::slotConnectClicked (bool checked __attribute__ ((unused)))
 {
   //  This protects against accidental (or screwy mouse) double-clicks.
 
-  if (connecting) return;
-  connecting = true;
+  if (busy) return;
+  busy = true;
   bConnect->setEnabled (false);
 
 
@@ -851,7 +877,7 @@ qexpressvpn::slotConnectClicked (bool checked __attribute__ ((unused)))
       if (options.auto_mini) slotStatusButtonClicked (true);
     }
 
-  connecting = false;
+  busy = false;
 }
 
 
@@ -1073,7 +1099,6 @@ qexpressvpn::slotProcessDone (int exitCode __attribute__ ((unused)), QProcess::E
 
 
       int32_t line_count = 0;
-      int32_t index = 0;
       QString current_country, current_country_alias;
 
       if (misc.process_ext == "recent") misc.recent_count = 0;
@@ -1207,7 +1232,6 @@ qexpressvpn::slotProcessDone (int exitCode __attribute__ ((unused)), QProcess::E
 
 
                   server.recent = "";
-                  server.index = index++;
 
 
                   if (server.alias == "smart")
@@ -1311,25 +1335,95 @@ qexpressvpn::slotProcessDone (int exitCode __attribute__ ((unused)), QProcess::E
 
       if (num_servers)
         {
+          //  We have to sort the list of servers and I'm trying to make sure that the "smart" location is always at the
+          //  top of the sorted list (sort_direction = 1 for descending, 0 for ascending).
+
+          for (int32_t i = 0 ; i < num_servers ; i++)
+            {
+              if (misc.server[i].alias == "smart")
+                {
+                  if (options.sort_direction)
+                    {
+                      misc.server[i].location.prepend ("ZZZZ_");
+                    }
+                  else
+                    {
+                      misc.server[i].location.prepend ("AAAA_");
+                    }
+                  break;
+                }
+            }
+
+          if (options.sort_direction)
+            {
+              sort (misc.server.begin (), misc.server.end (), descendingLocations);
+            }
+          else
+            {
+              sort (misc.server.begin (), misc.server.end (), ascendingLocations);
+            }
+
+
+          //  Strip off the sort-cheaters and set the server index numbers.
+
+          for (int32_t i = 0 ; i < num_servers ; i++)
+            {
+              misc.server[i].index = i;
+
+              if (misc.server[i].alias == "smart")
+                {
+                  misc.server[i].location.remove ("ZZZZ_");
+                  misc.server[i].location.remove ("AAAA_");
+                }
+            }
+
+
           if (serverTable != NULL) delete serverTable;
 
 
           serverTable = new QTableWidget (num_servers, 4, this);
           serverTable->setWhatsThis (tr ("To select a server just click on the <b>Location</b> button for the "
-                                         "server you want to use.<br><br>"
-                                         "<b>IMPORTANT NOTE: You cannot change servers while connected.  If you "
-                                         "want to change servers, please disconnect first.</b>"));
+                                         "server you want to use.  The servers are sorted by <b>Location</b> name in "
+                                         "either ascending <font color=\"#ff0000\"><b>\u2b06</b></font> or "
+                                         "descending <font color=\"#ff0000\"><b>\u2b07</b></font> order.  "
+                                         "Clicking on the <b>Location</b> column header will invert the sort order.<br><br>"
+                                         "<b>IMPORTANT NOTE: You cannot change servers or invert the sort order "
+                                         "while connected.  If you want to change servers or the sort order, "
+                                         "please disconnect first.</b>"));
           serverTable->setAlternatingRowColors (true);
 
 
           QTableWidgetItem *cItemH = new QTableWidgetItem (tr ("Country"));
           serverTable->setHorizontalHeaderItem (0, cItemH);
-          QTableWidgetItem *lItemH = new QTableWidgetItem (tr ("Location"));
+
+          QTableWidgetItem *lItemH = new QTableWidgetItem;
+          if (options.sort_direction)
+            {
+              QString s = QString::fromUtf8 ("\u2b07");
+              lItemH->setText (tr ("Location ") + s);
+            }
+          else
+            {
+              QString s = QString::fromUtf8 ("\u2b06");
+              lItemH->setText (tr ("Location ") + s);
+            }
+
           serverTable->setHorizontalHeaderItem (1, lItemH);
+          lItemH->setToolTip (tr ("Click here to invert the Location list"));
+          lItemH->setWhatsThis (tr ("The servers are sorted by <b>Location</b> name in either ascending "
+                                    "<font color=\"#ff0000\"><b>\u2b06</b></font> or descending "
+                                    "<font color=\"#ff0000\"><b>\u2b07</b></font> order.  Clicking "
+                                    "on the <b>Location</b> column header will invert the sort order.<br><br>"
+                                    "<b>IMPORTANT NOTE: You cannot change the sort order while connected.  If you want "
+                                    "to change the sort order, please disconnect first.</b>"));
+
           QTableWidgetItem *yItemH = new QTableWidgetItem (tr ("Recommended"));
           serverTable->setHorizontalHeaderItem (2, yItemH);
           QTableWidgetItem *rItemH = new QTableWidgetItem (tr ("Recent"));
           serverTable->setHorizontalHeaderItem (3, rItemH);
+
+          QHeaderView *serverTableHeader = (serverTable->horizontalHeader) ();
+          connect (serverTableHeader, SIGNAL (sectionClicked (int)), this, SLOT (slotHeaderClicked (int)));
 
           (serverTable->verticalHeader) ()->hide ();
 
@@ -1448,7 +1542,7 @@ qexpressvpn::slotProcessDone (int exitCode __attribute__ ((unused)), QProcess::E
     }
   else if (misc.current_process == "--version")
     {
-      //  Move along.
+      //  (Stupid stormtroopers.)
     }
   else if (misc.current_process == "protocol")
     {
@@ -1465,6 +1559,32 @@ qexpressvpn::slotProcessDone (int exitCode __attribute__ ((unused)), QProcess::E
 
 
   setWidgetStates ();
+}
+
+
+
+//  Invert the server list
+
+void
+qexpressvpn::slotHeaderClicked (int logicalIndex)
+{
+  if (!misc.connected && logicalIndex == 1)
+    {
+      options.sort_direction ^= 1;
+
+
+      qApp->setOverrideCursor (Qt::WaitCursor);
+      qApp->processEvents ();
+
+
+      //  Setting the invert flag causes the timer to rebuild the serverTable in about a half second.  This has
+      //  to be done outside of this function because the serverTable gets rebuilt.  The serverTable is
+      //  where slotHeaderClicked is connected (Ouroboros!).  The busy flag is set so that the user can't connect
+      //  until the server list is sorted.
+
+      busy = true;
+      invert = true;
+    }
 }
 
 
@@ -1859,8 +1979,12 @@ qexpressvpn::setWidgetStates ()
       protocol->setEnabled (false);
       for (uint32_t i = 0 ; i < misc.server.size () ; i++) serverTable->cellWidget (i, 1)->setEnabled (false);
 
-      bc = misc.fontString + misc.connectedTextColorString + QString ("background-color:rgba(%1,%2,%3,%4)").arg (options.connected_color.red ()).arg
-        (options.connected_color.green ()).arg (options.connected_color.blue ()).arg (options.connected_color.alpha ());
+      bc = QString ("QPushButton{") + misc.fontString + misc.connectedTextColorString + QString ("background-color:rgba(%1,%2,%3,%4)}").arg
+        (options.connected_color.red ()).arg (options.connected_color.green ()).arg (options.connected_color.blue ()).arg
+        (options.connected_color.alpha ());
+      bc += QString ("QPushButton:focus{") + misc.fontString + misc.connectedTextColorString +
+        QString ("background-color:rgba(%1,%2,%3,%4)}").arg (options.connected_color.red ()).arg (options.connected_color.green ()).arg
+        (options.connected_color.blue ()).arg (options.connected_color.alpha ());
     }
   else
     {
@@ -1869,8 +1993,11 @@ qexpressvpn::setWidgetStates ()
       protocol->setEnabled (true);
       for (uint32_t i = 0 ; i < misc.server.size () ; i++) serverTable->cellWidget (i, 1)->setEnabled (true);
 
-      bc = misc.fontString + misc.disconnectedTextColorString + QString ("background-color:rgba(%1,%2,%3,%4)").arg
+      bc = QString ("QPushButton{") + misc.fontString + misc.disconnectedTextColorString + QString ("background-color:rgba(%1,%2,%3,%4)}").arg
         (options.disconnected_color.red ()).arg (options.disconnected_color.green ()).arg 
+        (options.disconnected_color.blue ()).arg (options.disconnected_color.alpha ());
+      bc += QString ("QPushButton:focus{") + misc.fontString + misc.disconnectedTextColorString +
+        QString ("background-color:rgba(%1,%2,%3,%4)}").arg (options.disconnected_color.red ()).arg (options.disconnected_color.green ()).arg 
         (options.disconnected_color.blue ()).arg (options.disconnected_color.alpha ());
     }
 

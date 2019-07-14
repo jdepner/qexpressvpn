@@ -26,7 +26,7 @@
 
 #ifndef VERSION
 
-#define     VERSION     "PFM Software - qexpressvpn V2.04 - 07/13/19"
+#define     VERSION     "PFM Software - qexpressvpn V2.05 - 07/14/19"
 
 #endif
 
@@ -167,5 +167,12 @@
       header line for tabs.  Hopefully, this will deal with any changes they make to "list"
       output other than "all" if they change things in the future.  I'm leaving the
       get_version function in the program for possible future problems.
+
+
+    Version 2.05
+    Jan C. Depner (PFM Software)
+    07/14/19
+
+    - Added sorting of Location list.  Thanx and a tip of the hat to Alex for the idea.
 
 </pre>*/

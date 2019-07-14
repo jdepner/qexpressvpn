@@ -67,15 +67,21 @@ statusDialog::statusDialog (QWidget * parent, OPTIONS *op, MISC *mi):
   if (misc->connected)
     {
       logo = QIcon (":/resources/connect.png");
-      bc = misc->fontString + misc->connectedTextColorString + QString ("background-color:rgba(%1,%2,%3,%4)").arg
+      bc = QString ("QPushButton{") + misc->fontString + misc->connectedTextColorString + QString ("background-color:rgba(%1,%2,%3,%4)}").arg
         (options->connected_color.red ()).arg (options->connected_color.green ()).arg
+        (options->connected_color.blue ()).arg (options->connected_color.alpha ());
+      bc += QString ("QPushButton:focus{") + misc->fontString + misc->connectedTextColorString +
+        QString ("background-color:rgba(%1,%2,%3,%4)}").arg (options->connected_color.red ()).arg (options->connected_color.green ()).arg
         (options->connected_color.blue ()).arg (options->connected_color.alpha ());
     }
   else
     {
       logo = QIcon (":/resources/disconnect.png");
-      bc = misc->fontString + misc->disconnectedTextColorString + QString ("background-color:rgba(%1,%2,%3,%4)").arg
+      bc = QString ("QPushButton{") + misc->fontString + misc->disconnectedTextColorString + QString ("background-color:rgba(%1,%2,%3,%4)}").arg
         (options->disconnected_color.red ()).arg (options->disconnected_color.green ()).arg
+        (options->disconnected_color.blue ()).arg (options->disconnected_color.alpha ());
+      bc += QString ("QPushButton:focus{") + misc->fontString + misc->disconnectedTextColorString +
+        QString ("background-color:rgba(%1,%2,%3,%4)}").arg (options->disconnected_color.red ()).arg (options->disconnected_color.green ()).arg
         (options->disconnected_color.blue ()).arg (options->disconnected_color.alpha ());
     }
 
