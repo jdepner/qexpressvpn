@@ -37,7 +37,8 @@ main (int argc, char **argv)
 
     QTranslator translator;
     QString translatorName = QString ("qexpressvpn_") + QLocale::system ().name ();
-    //QString translatorName = "qexpressvpn_es_MX.utf8";
+    //QString translatorName = "qexpressvpn_es_ES.utf8";
+    //QString translatorName = "qexpressvpn_ru_RU.utf8";
     translator.load (translatorName, ":/resources");
     a.installTranslator (&translator);
 

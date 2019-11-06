@@ -86,6 +86,7 @@ typedef struct
   QColor            server_color;               //  Color used for all servers that aren't "recommended" or "recent"
   QColor            connected_color;            //  Connected color
   QColor            disconnected_color;         //  Disconnected color
+  QColor            connecting_color;           //  Connecting color
   int32_t           preferred_protocol;         //  Preferred protocol (0 = auto, 1 = udp, 2 = tcp)
   int32_t           server_type;                //  0 = show all servers, 1 = show only recommended servers
   SERVER            current_server;             //  The current server
@@ -127,6 +128,7 @@ typedef struct
   uint32_t          list_loc[4];                //  Locations of start of strings in "list" output (space delimiters instead of tabs)
   QString           connectedTextColorString;
   QString           disconnectedTextColorString;
+  QString           connectingTextColorString;
   QString           fontString;
   QString           progName;                   //  Program name of the ExpressVPN Linux client (just in case they change it ;-)
   QString           connectString;              /*  A place to temporarily store information from the "connect" command in case

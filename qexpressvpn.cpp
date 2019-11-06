@@ -75,6 +75,7 @@ qexpressvpn::qexpressvpn (QWidget *parent):
   busy = false;
   start_me_up = false;
   invert = false;
+  new_version = false;
 
 
   //  Trying to make QToolTips easier to read.
@@ -272,6 +273,13 @@ qexpressvpn::qexpressvpn (QWidget *parent):
                                         "button, and the status button when not connected to a server."));
   connect (bDisconnectedColor, SIGNAL (clicked ()), this, SLOT (slotDisconnectedColor ()));
   colorsLayout->addWidget (bDisconnectedColor);
+
+
+  bConnectingColor = new QPushButton (tr ("Connecting color"), this);
+  bConnectingColor->setToolTip (tr ("Change connecting color"));
+  bConnectingColor->setWhatsThis (tr ("Select the color that you want to use for the status button when connecting to a server."));
+  connect (bConnectingColor, SIGNAL (clicked ()), this, SLOT (slotConnectingColor ()));
+  colorsLayout->addWidget (bConnectingColor);
 
 
   QHBoxLayout *miscLayout = new QHBoxLayout (0);
@@ -563,6 +571,15 @@ qexpressvpn::getVersion ()
   QString txt = temp_str.readLine ();
 
 
+  //  Get rid of the "new version" lines.
+
+  if (txt.contains ("A new version is available"))
+    {
+      txt = temp_str.readLine ();
+      txt = temp_str.readLine ();
+    }
+
+
   //  Get rid of the ECMA-48 Set Graphics Rendition (SGR) ESCAPE sequences.  These are used by the
   //  ExpressVPN Linux client to change the color/characteristics of the text going to the terminal.
   //  They always start with "\u001B[" and end with "l", "m", or "h".
@@ -644,6 +661,15 @@ qexpressvpn::getStatus ()
   QTextStream temp_str (&temp_file);
 
   QString txt = temp_str.readLine ();
+
+
+  //  Get rid of the "new version" lines.
+
+  if (txt.contains ("A new version is available"))
+    {
+      txt = temp_str.readLine ();
+      txt = temp_str.readLine ();
+    }
 
 
   //  Get rid of the ECMA-48 Set Graphics Rendition (SGR) ESCAPE sequences.  These are used by the
@@ -806,6 +832,19 @@ qexpressvpn::slotConnectClicked (bool checked __attribute__ ((unused)))
   //  anyone clicking it while it is in the process of connecting.
 
   statusButton->setEnabled (false);
+
+
+  //  We want to set the status button to the "Connecting" color while it's trying to connect because the latest version
+  //  of the Linux app is a bit slow getting to the percentages.  This just gives you a visible clue that it's trying to connect.
+
+  QString bc = QString ("QPushButton{") + misc.fontString + misc.connectingTextColorString + QString ("background-color:rgba(%1,%2,%3,%4)}").arg
+    (options.connecting_color.red ()).arg (options.connecting_color.green ()).arg 
+    (options.connecting_color.blue ()).arg (options.connecting_color.alpha ());
+  bc += QString ("QPushButton:focus{") + misc.fontString + misc.connectingTextColorString +
+    QString ("background-color:rgba(%1,%2,%3,%4)}").arg (options.connecting_color.red ()).arg (options.connecting_color.green ()).arg 
+    (options.connecting_color.blue ()).arg (options.connecting_color.alpha ());
+  statusButton->setStyleSheet (bc);
+  statusButton->setText (tr ("Connecting..."));
 
 
   qApp->setOverrideCursor (Qt::WaitCursor);
@@ -1109,20 +1148,36 @@ qexpressvpn::slotProcessDone (int exitCode __attribute__ ((unused)), QProcess::E
           QString txt = temp_str.readLine ();
 
 
-          //  New version message gets displayed in a message box.
+          //  New version message gets displayed in a message box the first time.
 
           if (txt.contains ("A new version is available"))
             {
-              QString msg = txt.mid (txt.indexOf ("A new version is available"));
-              QMessageBox::critical (this, "qexpressvpn", msg);
-              qApp->processEvents ();
+              if (!new_version)
+                {
+                  int ret = QMessageBox::information (this, "qexpressvpn", txt + "\nDo you wish to continue?",
+                                                      QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
+
+                  if (ret == QMessageBox::No)
+                    {
+                      qApp->processEvents ();
 
 
-              //  Get rid of the lock file.
+                      //  Get rid of the lock file.
 
-              QFile::remove (lockFileName);
+                      QFile::remove (lockFileName);
 
-              exit (0);
+                      exit (0);
+                    }
+                }
+
+
+              new_version = true;
+
+
+              //  Drop the "new version" lines
+
+              txt = temp_str.readLine ();
+              txt = temp_str.readLine ();
             }
 
 
@@ -1523,6 +1578,14 @@ qexpressvpn::slotProcessDone (int exitCode __attribute__ ((unused)), QProcess::E
         {
           QString txt = temp_str.readLine ();
 
+          //  Get rid of the "new version" lines.
+
+          if (txt.contains ("A new version is available"))
+            {
+              txt = temp_str.readLine ();
+              txt = temp_str.readLine ();
+            }
+
           diagTextEdit->append (txt);
         }
 
@@ -1666,6 +1729,34 @@ qexpressvpn::slotDisconnectedColor ()
   else
     {
       misc.disconnectedTextColorString = "color: black; ";
+    }
+
+  setWidgetStates ();
+}
+
+
+
+//  Change the connecting color
+
+void
+qexpressvpn::slotConnectingColor ()
+{
+  QColor clr;
+
+  clr = QColorDialog::getColor (options.connecting_color, this, tr ("qexpressvpn Connecting Color"), QColorDialog::ShowAlphaChannel);
+
+  if (clr.isValid ()) options.connecting_color = clr;
+
+  int32_t hue, sat, val;
+
+  options.connecting_color.getHsv (&hue, &sat, &val);
+  if (val < 128)
+    {
+      misc.connectingTextColorString = "color: white; ";
+    }
+  else
+    {
+      misc.connectingTextColorString = "color: black; ";
     }
 
   setWidgetStates ();
@@ -1970,6 +2061,11 @@ qexpressvpn::setWidgetStates ()
     (options.disconnected_color.red ()).arg (options.disconnected_color.green ()).arg
     (options.disconnected_color.blue ()).arg (options.disconnected_color.alpha ());
   bDisconnectedColor->setStyleSheet (bc);
+
+  bc = misc.fontString + misc.connectingTextColorString + QString ("background-color:rgba(%1,%2,%3,%4)").arg
+    (options.connecting_color.red ()).arg (options.connecting_color.green ()).arg
+    (options.connecting_color.blue ()).arg (options.connecting_color.alpha ());
+  bConnectingColor->setStyleSheet (bc);
 
 
   if (misc.connected)

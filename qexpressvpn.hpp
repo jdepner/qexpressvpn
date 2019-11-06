@@ -80,7 +80,8 @@ protected:
 
   QDialog         *statusDialogButtonD;
 
-  QPushButton     *bConnect, *bDisconnect, *statusButton, *statusDialogButton, *bServerColor, *bConnectedColor, *bDisconnectedColor, *bFont;
+  QPushButton     *bConnect, *bDisconnect, *bConnecting, *statusButton, *statusDialogButton, *bServerColor, *bConnectedColor,
+                  *bDisconnectedColor, *bConnectingColor, *bFont;
 
   QComboBox       *protocol;
 
@@ -94,7 +95,7 @@ protected:
 
   statusDialog    *statusDialogD;
 
-  uint8_t         normal_exit, busy, start_me_up, invert;
+  uint8_t         normal_exit, busy, start_me_up, invert, new_version;
 
 
   void getVersion ();
@@ -124,6 +125,7 @@ protected slots:
   void slotServerColor ();
   void slotConnectedColor ();
   void slotDisconnectedColor ();
+  void slotConnectingColor ();
   void slotFont ();
   void slotProtocolChanged (int index);
   void slotAutoConnect (int state);

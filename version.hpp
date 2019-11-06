@@ -26,7 +26,7 @@
 
 #ifndef VERSION
 
-#define     VERSION     "PFM Software - qexpressvpn V2.05 - 07/14/19"
+#define     VERSION     "PFM Software - qexpressvpn V2.07 - 11/06/19"
 
 #endif
 
@@ -174,5 +174,24 @@
     07/14/19
 
     - Added sorting of Location list.  Thanx and a tip of the hat to Alex for the idea.
+
+
+    Version 2.06
+    Jan C. Depner (PFM Software)
+    10/16/19
+
+    - Added a color to indicate that the program is connecting.  I added this because the 
+      latest version of the ExpressVPN Linux client takes a long time to get to the
+      "percentages".
+    - Alex added an almost complete Russian translation.
+
+
+    Version 2.07
+    Jan C. Depner (PFM Software)
+    11/06/19
+
+    - Expressvpn created a Charlie Foxtrot by upgrading their Linux client to 2.3.2 but
+      setting the version number internally to 2.3.1.  So... I added code to allow you to
+      ignore the repetitive "new version" messages if you want.
 
 </pre>*/

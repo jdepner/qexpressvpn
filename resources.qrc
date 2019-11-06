@@ -11,6 +11,7 @@
         <file>resources/status_small.png</file>
         <file>resources/check20.png</file>
         <file>resources/qexpressvpn_es.qm</file>
+        <file>resources/qexpressvpn_ru.qm</file>
  </qresource>
  </RCC>
 

@@ -39,6 +39,7 @@ void set_defaults (MISC *misc, OPTIONS *options)
   options->server_color = QColor (255, 255, 255, 255);
   options->connected_color = QColor (0, 255, 0, 255);
   options->disconnected_color = QColor (255, 0, 0, 255);
+  options->connecting_color = QColor (255, 255, 0, 255);
   options->preferred_protocol = 0;
   options->server_type = 0;
   options->current_server.alias = "smart";

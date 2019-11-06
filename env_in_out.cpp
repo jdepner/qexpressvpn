@@ -89,6 +89,12 @@ uint8_t envin (OPTIONS *options)
   alpha = settings.value (QString ("disconnected color/alpha"), options->disconnected_color.alpha ()).toInt ();
   options->disconnected_color.setRgb (red, green, blue, alpha);
 
+  red = settings.value (QString ("connecting color/red"), options->connecting_color.red ()).toInt ();
+  green = settings.value (QString ("connecting color/green"), options->connecting_color.green ()).toInt ();
+  blue = settings.value (QString ("connecting color/blue"), options->connecting_color.blue ()).toInt ();
+  alpha = settings.value (QString ("connecting color/alpha"), options->connecting_color.alpha ()).toInt ();
+  options->connecting_color.setRgb (red, green, blue, alpha);
+
   options->current_server.alias = settings.value (QString ("current alias"), options->current_server.alias).toString ();
   options->current_server.country = settings.value (QString ("current country"), options->current_server.country).toString ();
   options->current_server.country_alias = settings.value (QString ("current country alias"), options->current_server.country_alias).toString ();
@@ -150,6 +156,11 @@ void envout (OPTIONS *options)
   settings.setValue (QString ("disconnected color/green"), options->disconnected_color.green ());
   settings.setValue (QString ("disconnected color/blue"), options->disconnected_color.blue ());
   settings.setValue (QString ("disconnected color/alpha"), options->disconnected_color.alpha ());
+
+  settings.setValue (QString ("connecting color/red"), options->connecting_color.red ());
+  settings.setValue (QString ("connecting color/green"), options->connecting_color.green ());
+  settings.setValue (QString ("connecting color/blue"), options->connecting_color.blue ());
+  settings.setValue (QString ("connecting color/alpha"), options->connecting_color.alpha ());
 
   settings.setValue (QString ("current alias"), options->current_server.alias);
   settings.setValue (QString ("current country"), options->current_server.country);
