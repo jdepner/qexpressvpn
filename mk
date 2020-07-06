@@ -5,8 +5,8 @@
 
 rm -f qrc_resources.cpp qexpressvpn.pro Makefile
 
-qmake -project -o qexpressvpn.tmp
-cat >qexpressvpn.pro <<EOF
+qmake -project -o qexpressvpn
+cat >qexpressvpn.tmp <<EOF
 QT += widgets
 CONFIG += console
 CONFIG += -no-pie
@@ -14,8 +14,9 @@ CODECFORSRC = UTF-8
 EOF
 
 
-cat qexpressvpn.tmp >>qexpressvpn.pro
-rm qexpressvpn.tmp
+cat qexpressvpn.pro >>qexpressvpn.tmp
+rm qexpressvpn.pro
+mv qexpressvpn.tmp qexpressvpn.pro
 
 
 # Building the Makefile file using qmake

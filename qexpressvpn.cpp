@@ -1994,7 +1994,6 @@ qexpressvpn::slotQuit ()
 
       setWidgetStates ();
       qApp->processEvents ();
-      sleep (2);
     }
 
 

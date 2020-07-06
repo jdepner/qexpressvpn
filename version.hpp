@@ -26,7 +26,7 @@
 
 #ifndef VERSION
 
-#define     VERSION     "PFM Software - qexpressvpn V2.07 - 11/06/19"
+#define     VERSION     "PFM Software - qexpressvpn V2.08 - 07/06/20"
 
 #endif
 
@@ -193,5 +193,13 @@
     - Expressvpn created a Charlie Foxtrot by upgrading their Linux client to 2.3.2 but
       setting the version number internally to 2.3.1.  So... I added code to allow you to
       ignore the repetitive "new version" messages if you want.
+
+
+    Version 2.08
+    Jan C. Depner (PFM Software)
+    07/06/20
+
+    - Removed sleep call from "Disconnect on exit" option.  It seemed to have a deleterious effect
+      on some wireless connections.
 
 </pre>*/
