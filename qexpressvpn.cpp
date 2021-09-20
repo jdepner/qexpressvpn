@@ -418,14 +418,17 @@ qexpressvpn::qexpressvpn (QWidget *parent):
   getVersion ();
 
 
+
   //  Get the current status...
 
   getStatus ();
 
 
+
   //  Set the preferred protocol...
 
   slotProtocolChanged (options.preferred_protocol);
+
 
 
   //  Now, get the server list...
@@ -1142,7 +1145,7 @@ qexpressvpn::slotProcessDone (int exitCode __attribute__ ((unused)), QProcess::E
 
       if (misc.process_ext == "recent") misc.recent_count = 0;
 
-
+      
       while (!temp_str.atEnd ())
         {
           QString txt = temp_str.readLine ();
@@ -1276,7 +1279,7 @@ qexpressvpn::slotProcessDone (int exitCode __attribute__ ((unused)), QProcess::E
               if (misc.process_ext == "recent")
                 {
                   misc.recent[misc.recent_count].alias = txtList.at (0);
-                  misc.recent[misc.recent_count].recent = txtList.at (3);
+                  misc.recent[misc.recent_count].recent = txtList.at (2);
                   misc.recent_count++;
                 }
               else

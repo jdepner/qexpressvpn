@@ -26,7 +26,7 @@
 
 #ifndef VERSION
 
-#define     VERSION     "PFM Software - qexpressvpn V2.08 - 07/06/20"
+#define     VERSION     "PFM Software - qexpressvpn V2.09 - 09/20/21"
 
 #endif
 
@@ -201,5 +201,13 @@
 
     - Removed sleep call from "Disconnect on exit" option.  It seemed to have a deleterious effect
       on some wireless connections.
+
+
+    Version 2.09
+    Jan C. Depner (PFM Software)
+    09/20/21
+
+    - As of expressVPN 3.11 the "Recent" list item has only 3 entries... or perhaps I was just getting lucky
+      before ;-)
 
 </pre>*/
